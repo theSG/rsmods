@@ -804,11 +804,13 @@ HRESULT APIENTRY D3DHooks::Hook_EndScene(IDirect3DDevice9* pDevice) {
 			int currentSongTime = std::stoi(currentSongTimeString, &stringSize); // We don't need to tell them the EXACT microsecond it is, just a second is fine.
 			int seconds = 0, minutes = 0, hours = 0; // Can't leave them uninitialized or the (minutes >= 60) will freak out and throw a warning.
 			
-			seconds = currentSongTime % 60;
-			minutes = (currentSongTime / 60) % 60;
+			seconds = (int)currentSongTime % 60;
+			minutes = (int)(currentSongTime / 60) % 60;
 			hours = currentSongTime / 3600;
+			char buffer[64];
+			sprintf_s(buffer, "%02dh:%02dm:%02ds", hours, minutes, seconds);
 			
-			MemHelpers::DX9DrawText(std::to_string(hours) + "h:" + std::to_string(minutes) + "m:" + std::to_string(seconds) + "s", whiteText, static_cast<int>(WindowSize.width / 1.35), static_cast<int>(WindowSize.height / 30.85), static_cast<int>(WindowSize.width / 1.45), static_cast<int>(WindowSize.height / 8), pDevice);
+			MemHelpers::DX9DrawText(std::string(buffer), whiteText, static_cast<int>(WindowSize.width / 1.35), static_cast<int>(WindowSize.height / 30.85), static_cast<int>(WindowSize.width / 1.45), static_cast<int>(WindowSize.height / 8), pDevice);
 		}
 
 		//if ((Settings::ReturnSettingValue("RRSpeedAboveOneHundred") == "on" && RiffRepeater::loggedCurrentSongID && (MemHelpers::IsInStringArray(currentMenu, fastRRModes) || MemHelpers::IsInStringArray(currentMenu, scoreScreens))) || RiffRepeater::currentlyEnabled_Above100) { // Riff Repeater over 100%
@@ -1131,6 +1133,8 @@ unsigned WINAPI MainThread() {
 	//AudioDevices::SetupMicrophones();
 	//BugPrevention::AllowComplexPasswords();
 	//BugPrevention::PreventAdvancedDisplayCrash();
+	BugPrevention::PreventExtraAudioDevicesCrash();
+
 #ifdef _FIX_STORE
 	MemUtil::PatchAdr((void*)Offsets::steamApiUri, "%s://localhost:5154/api/requests/%d,%s,%s", 42); // Proxy available here: https://github.com/ffio1/SteamAPIProxy
 #endif
@@ -1473,7 +1477,7 @@ unsigned WINAPI MainThread() {
 				// If the user user says "I want to always load this profile"
 				// Skip UPlay login dialog - escape twice then enter
 				if (currentMenu == (std::string)"SelectionListDialog" || currentMenu == (std::string)"UplayLoginDialog") {
-					Util::SendKey(VK_ESCAPE);										
+					if (Settings::ReturnSettingValue("SkipLogin") == "on") Util::SendKey(VK_ESCAPE);
 					AutoEnterGame();
 				}
 				else if (Settings::ReturnSettingValue("ProfileToLoad") != "" && currentMenu == (std::string)"ProfileSelect") {

@@ -148,6 +148,8 @@ namespace Offsets {
 	extern uintptr_t ptr_Password_LimitCharacters;
 	extern uintptr_t ptr_AdvancedDisplayCrash;
 	extern uintptr_t ptr_AdvancedDisplayCrashJmpBck;
+	extern uintptr_t ptr_PortAudioInCrash;
+	extern uintptr_t ptr_AdditionalAudioDevicesCrash;
 
 	// Audio In Background
 	extern uintptr_t ptr_IsWindowInFocus;

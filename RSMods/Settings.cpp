@@ -79,7 +79,8 @@ void Settings::Initialize()
 		{"BypassTwoRTCMessageBox", "off"},
 		{"LinearRiffRepeater", "off"},
 		{"AltOutputSampleRate", "off"},
-		{"SkipSelection", "off"}
+		{"SkipSelection", "off"},
+		{"SkipLogin", "off"}
 	};
 
 	customSettings = {
@@ -272,6 +273,7 @@ void Settings::ReadModSettings() {
 	modSettings["LinearRiffRepeater"] = reader.GetValue("Toggle Switches", "LinearRiffRepeater", "off");
 	modSettings["AltOutputSampleRate"] = reader.GetValue("Toggle Switches", "AltOutputSampleRate", "off");
 	modSettings["SkipSelection"] = reader.GetValue("Toggle Switches", "SkipSelection", "off");
+	modSettings["SkipLogin"] = reader.GetValue("Toggle Switches", "SkipLogin", "off");
 }
 
 /// <summary>

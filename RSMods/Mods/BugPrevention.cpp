@@ -76,4 +76,12 @@ namespace BugPrevention {
 		FlushInstructionCache(GetCurrentProcess(), (void*)Offsets::ptr_AdvancedDisplayCrash, 7);
 		std::cout << "(BUG PREVENTION) Prevented Advanced Display Crash" << std::endl;
 	}
+	/// <summary>
+	/// Prevention for crash caused by certain audio devices (like Voicemeter virtual cables).
+	/// </summary>
+	void PreventExtraAudioDevicesCrash() {
+		
+		MemUtil::PatchAdr((LPVOID)Offsets::ptr_AdditionalAudioDevicesCrash, "\x90\x90\x90\x90\x90\x31\xC9\x31\xDB", 9);
+		std::cout << "(BUG PREVENTION) Prevented Additional Audio Devices Crash" << std::endl;
+	}
 }

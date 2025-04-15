@@ -164,6 +164,7 @@ namespace Offsets {
 	uintptr_t ptr_AdvancedDisplayCrash = 0x0091FB73;
 	uintptr_t ptr_AdvancedDisplayCrashJmpBck = 0x0091FB7A;
 	uintptr_t ptr_PortAudioInCrash = 0x00C43AF5;
+	uintptr_t ptr_AdditionalAudioDevicesCrash = 0x00E7CF70;
 
 	// Audio In Background
 	uintptr_t ptr_IsWindowInFocus = 0x1251A78; // 0x0124ea78 Is the window currently in focus? 0 - Out of focus, 1 - In focus.
