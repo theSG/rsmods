@@ -146,16 +146,16 @@ HRESULT APIENTRY D3DHooks::Hook_Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARA
 	// Lost Device
 	ImGui_ImplDX9_InvalidateDeviceObjects();
 
-	if (MemHelpers::DX9FontEncapsulation)
-		MemHelpers::DX9FontEncapsulation->OnLostDevice();
+	//if (MemHelpers::DX9FontEncapsulation)		MemHelpers::DX9FontEncapsulation->OnLostDevice();
+	MemHelpers::fontCache.OnLostDevice();
 
 	// Reset Device
 	HRESULT ResetReturn = oReset(pDevice, pPresentationParameters);
 
 	ImGui_ImplDX9_CreateDeviceObjects();
 
-	if (MemHelpers::DX9FontEncapsulation)
-		MemHelpers::DX9FontEncapsulation->OnResetDevice();
+	//if (MemHelpers::DX9FontEncapsulation)		MemHelpers::DX9FontEncapsulation->OnResetDevice();
+	MemHelpers::fontCache.OnResetDevice();
 
 	return ResetReturn;
 }

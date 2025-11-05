@@ -560,8 +560,11 @@ void MemHelpers::DX9DrawText(std::string textToDraw, int textColorHex, int topLe
 
 	// Allow Font Size Declaration
 	bool useInputFontSize = (setFontSize.width != NULL && setFontSize.height != NULL);
+	// This is backwards!
+	int targetH = useInputFontSize ? setFontSize.width : (WindowSize.width / 96);
+	int targetW = useInputFontSize ? setFontSize.height : (WindowSize.height / 72);
 
-	// If the user changes resolutions, we want to scale the text dynamically. This also covers the first font creation as the font and WindowSize variables are all null to begin with.
+	/* // If the user changes resolutions, we want to scale the text dynamically. This also covers the first font creation as the font and WindowSize variables are all null to begin with.
 	if ((WindowSizeX != (WindowSize.width / 96) || WindowSizeY != (WindowSize.height / 72) || CustomDX9Font == NULL) && !useInputFontSize) {
 		WindowSizeX = (WindowSize.width / 96);
 		WindowSizeY = (WindowSize.height / 72);
@@ -570,19 +573,28 @@ void MemHelpers::DX9DrawText(std::string textToDraw, int textColorHex, int topLe
 	}
 	else if (useInputFontSize)
 		CustomDX9Font = D3DXCreateFontA(pDevice, setFontSize.width, setFontSize.height, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, Settings::ReturnSettingValue("OnScreenFont").c_str(), &DX9FontEncapsulation); // Create a new font
+	*/
+
+	const std::string face = Settings::ReturnSettingValue("OnScreenFont");
+	FontKey key = FontKey::Make(face, targetH, targetW, FW_NORMAL, false);
 
 	// Create Area To Draw Text
 	RECT TextRectangle{ topLeftX, topLeftY, bottomRightX, bottomRightY }; // Left, Top, Right, Bottom
 
+	CComPtr<ID3DXFont> font;
+	if (!fontCache.Get(pDevice, key, font)) {
+		std::cout << "Could not acquire required font." << std::endl;
+		return;
+	}
 	// Preload And Draw The Text (Supposed to reduce the performance hit (It's D3D/DX9 but still good practice))
-	DX9FontEncapsulation->PreloadTextA(textToDraw.c_str(), textToDraw.length());
-	DX9FontEncapsulation->DrawTextA(NULL, textToDraw.c_str(), -1, &TextRectangle, format, textColorHex);
+	font->PreloadTextA(textToDraw.c_str(), textToDraw.length());
+	font->DrawTextA(NULL, textToDraw.c_str(), -1, &TextRectangle, format, textColorHex);
 
-	// Let's clean up our junk, since fonts don't do it automatically.
+	/* // Let's clean up our junk, since fonts don't do it automatically.
 	if (DX9FontEncapsulation) {
 		DX9FontEncapsulation->Release();
 		DX9FontEncapsulation = NULL;
-	}
+	} */
 }
 
 /// <summary>

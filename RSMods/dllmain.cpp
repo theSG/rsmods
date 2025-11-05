@@ -55,12 +55,9 @@ void AutomatedToneChange(int command, std::string name, bool isapreset) {
 
 void PatchTwoRTC()
 {
-	MemUtil::PatchAdr((LPVOID)Offsets::ptr_twoRTCBypass, (LPVOID)Offsets::ptr_twoRTCBypass_patch_call, 5);
-	MemUtil::PatchAdr((LPVOID)(Offsets::ptr_twoRTCBypass + 5), (LPVOID)Offsets::ptr_twoRTCBypass_patch_test, 2);
-	MemUtil::PatchAdr((LPVOID)(Offsets::ptr_twoRTCBypass + 7), (LPVOID)Offsets::ptr_twoRTCBypass_patch_jz, 2);
-	MemUtil::PatchAdr((LPVOID)(Offsets::ptr_twoRTCBypass + 9), (LPVOID)Offsets::ptr_twoRTCBypass_patch_mov, 5);
-	MemUtil::PatchAdr((LPVOID)(Offsets::ptr_twoRTCBypass + 14), (LPVOID)Offsets::ptr_twoRTCBypass_patch_lea, 6);
-	MemUtil::PatchAdr((LPVOID)(Offsets::ptr_twoRTCBypass + 20), (LPVOID)Offsets::ptr_twoRTCBypass_patch_call, 5);
+	char patch[25];
+	std::fill_n(patch, 25, 0x90);
+	MemUtil::PatchAdr((LPVOID)Offsets::ptr_twoRTCBypass, patch, sizeof(patch));
 }
 
 /// <summary>
@@ -409,7 +406,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM keyPressed, LPARAM lParam) {
 				MemUtil::PatchAdr((BYTE*)Offsets::patch_scrollSpeedLTTarget, (UINT*)Offsets::patch_scrollSpeedChange, 3);
 				MemUtil::PatchAdr((BYTE*)Offsets::patch_scrollSpeedGTTarget, (UINT*)Offsets::patch_scrollSpeedChange, 3);
 				if (GetAsyncKeyState(VK_CONTROL) < 0)
-					MemUtil::SetStaticValue(Offsets::ptr_scrollSpeedMultiplier, 3.3, sizeof(double));
+					MemUtil::SetStaticValue(Offsets::ptr_scrollSpeedMultiplier, 3.25, sizeof(double));
 				else MemUtil::SetStaticValue(Offsets::ptr_scrollSpeedMultiplier, 9.0, sizeof(double));
 				}
 			else if (keyPressed == VK_F2)
