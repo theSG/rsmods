@@ -15,9 +15,6 @@ unsigned WINAPI EnumerationThread() {
 	while (!D3DHooks::GameLoaded)
 		Sleep(5000);
 
-	Settings::ReadKeyBinds();
-	Settings::ReadModSettings();
-
 	int oldDLCCount = Enumeration::GetCurrentDLCCount(), newDLCCount = oldDLCCount;
 
 	// Look for new dlc files loop. If there is any, trigger Enumeration, else sleep. Break when game is closing.
@@ -1119,7 +1116,10 @@ unsigned WINAPI MainThread() {
 	// Initialize Functions
 	D3DHooks::debug = debug;
 	Offsets::Initialize();
-	MemUtil::PatchAdr((char*)0x0041C640, "\xE0", 1); // Patches out secret function in Rocksmith.
+	//patch
+	uintptr_t forceSuccessLSBOffset = 0x0001C640 + 0x3;
+	byte forceFailedLSB = MemUtil::ReadValue<byte>(forceSuccessLSBOffset + 0x14, true); 
+	MemUtil::PatchAdr(forceSuccessLSBOffset, (LPVOID)&forceFailedLSB, 1, true);
 	Settings::Initialize();
 	UpdateSettings();
 	ERMode::Initialize();
@@ -1502,6 +1502,10 @@ unsigned WINAPI MainThread() {
 /// Unhook all threads to take advantage of multi-threading.
 /// </summary>
 void Initialize() {
+
+	Settings::ReadKeyBinds();
+	Settings::ReadModSettings();
+
 	std::thread(MainThread).detach(); // Mod Toggle based on menus
 	std::thread(EnumerationThread).detach(); // Force Enumeration
 //	std::thread(HandleEffectQueueThread).detach(); // Twitch Effects

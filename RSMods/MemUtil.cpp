@@ -1,4 +1,5 @@
 #include "MemUtil.hpp"
+#include "Offsets.hpp"
 
 /// <summary>
 /// Base to FindPattern
@@ -10,6 +11,10 @@ bool MemUtil::bCompare(const BYTE* pData, const byte* bMask, const char* szMask)
 	return (*szMask) == NULL;
 }
 
+bool MemUtil::PatchAdr(uintptr_t address, LPVOID changeToMake, size_t len, bool addBaseHandle) {
+	uintptr_t addr = address + (addBaseHandle ? Offsets::baseHandle : 0);
+	return PatchAdr((LPVOID)(addr), changeToMake, len);
+}
 /// <summary>
 /// Write x86 ASM (HEX) to address.
 /// </summary>
@@ -146,6 +151,8 @@ uintptr_t MemUtil::FindDMAAddy(uintptr_t ptr, std::vector<unsigned int> offsets,
 
 		addr += offsets[i];
 	}
+	if (safe && IsBadReadPtr((void*)addr))
+		return NULL;
 	return addr;
 }
 
